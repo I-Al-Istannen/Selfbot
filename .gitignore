@@ -2,4 +2,4 @@
 *.iml
 target/
 dependency-reduced-pom.xml
-config.yml
+/config.yml
