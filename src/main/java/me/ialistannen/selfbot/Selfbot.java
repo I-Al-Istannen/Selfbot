@@ -4,7 +4,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.security.auth.login.LoginException;
+import me.ialistannen.selfbot.command.CommandHandler;
 import me.ialistannen.selfbot.config.SimpleYamlConfig;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 /**
@@ -16,7 +19,7 @@ public final class Selfbot {
 
   private SimpleYamlConfig config;
 
-  private Selfbot(String token) throws LoginException, InterruptedException, RateLimitedException {
+  private Selfbot() throws LoginException, InterruptedException, RateLimitedException {
     instance = this;
 
     if (Files.exists(getConfigPath())) {
@@ -26,14 +29,17 @@ public final class Selfbot {
       config.applyDefaults(
           SimpleYamlConfig.loadConfig(getClass().getResourceAsStream("/resources/config.yml"))
       );
+
+      Path savePath = Paths.get("config.yml").toAbsolutePath();
+      config.save(savePath);
+      System.out.printf("Please populate your config now (%s)!\n", savePath);
+      System.exit(0);
     }
 
-    System.out.println(getConfig());
-
-//    new JDABuilder(AccountType.CLIENT)
-//        .setToken(token)
-//        .addEventListener(new CommandHandler())
-//        .buildBlocking();
+    new JDABuilder(AccountType.CLIENT)
+        .setToken(getConfig().get("settings.token").getAsString())
+        .addEventListener(new CommandHandler())
+        .buildBlocking();
   }
 
   public Path getConfigPath() {
@@ -49,6 +55,6 @@ public final class Selfbot {
   }
 
   public static void main(String[] args) throws Exception {
-    TokenFetcher.fetchToken(SelfbotArgumentParser.parseArgumentsOrExit(args), Selfbot::new);
+    new Selfbot();
   }
 }

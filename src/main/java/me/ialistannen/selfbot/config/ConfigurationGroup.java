@@ -3,6 +3,7 @@ package me.ialistannen.selfbot.config;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -104,6 +105,43 @@ public class ConfigurationGroup extends AbstractConfigurationSection {
   private void addChild(String name, AbstractConfigurationSection section) {
     section.setParent(this, name);
     children.put(name, section);
+  }
+
+
+  /**
+   * Sets the values of this group to the given map.
+   *
+   * @param value The map to set it to
+   */
+  void setToMap(Map<String, Object> value) {
+    for (Entry<String, Object> entry : value.entrySet()) {
+      if (entry.getValue() instanceof Map) {
+        ConfigurationGroup group = new ConfigurationGroup();
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> childValue = (Map<String, Object>) entry.getValue();
+        group.setToMap(childValue);
+
+        addChild(entry.getKey(), group);
+      } else {
+        set(entry.getKey(), entry.getValue());
+      }
+    }
+  }
+
+  Map<String, Object> groupToMap() {
+    Map<String, Object> map = new HashMap<>();
+
+    for (Entry<String, AbstractConfigurationSection> entry : children.entrySet()) {
+      if (entry.getValue().isValue()) {
+        map.put(entry.getKey(), entry.getValue().getAsValue().getRaw());
+        continue;
+      }
+
+      map.put(entry.getKey(), entry.getValue().getAsGroup().groupToMap());
+    }
+
+    return map;
   }
 
   @Override

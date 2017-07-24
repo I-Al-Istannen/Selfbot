@@ -5,8 +5,8 @@ package me.ialistannen.selfbot.config;
  */
 abstract class AbstractConfigurationSection implements ConfigurationSection {
 
-  private AbstractConfigurationSection parent;
-  private String name;
+  private transient AbstractConfigurationSection parent;
+  private transient String name;
 
   /**
    * @return The Path for this section

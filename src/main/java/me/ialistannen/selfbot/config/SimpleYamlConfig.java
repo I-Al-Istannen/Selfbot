@@ -107,9 +107,7 @@ public class SimpleYamlConfig {
    * @throws ConfigurationIOException if an {@link IOException} occurs
    */
   public void save(Path path) {
-    String yamlDump = yaml.dump(rootGroup);
-
-    System.out.println(yamlDump);
+    String yamlDump = yaml.dumpAsMap(rootGroup.groupToMap());
 
     try {
       Files.write(
@@ -161,12 +159,18 @@ public class SimpleYamlConfig {
 
       Object loadedObject = yaml.load(reader);
 
-      if (!(loadedObject instanceof ConfigurationGroup)) {
-        throw new IllegalArgumentException("Root is not of type 'ConfigurationGroup'!");
+      if (!(loadedObject instanceof Map)) {
+        throw new IllegalArgumentException("Root is not of type 'Map'!");
       }
 
-      return new SimpleYamlConfig((ConfigurationGroup) loadedObject);
+      @SuppressWarnings("unchecked")
+      Map<String, Object> loadedMap = (Map<String, Object>) loadedObject;
 
+      ConfigurationGroup rootGroup = new ConfigurationGroup();
+
+      rootGroup.setToMap(loadedMap);
+
+      return new SimpleYamlConfig(rootGroup);
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "Error loading a config", e);
 
