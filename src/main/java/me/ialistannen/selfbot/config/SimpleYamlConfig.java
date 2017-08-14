@@ -79,8 +79,24 @@ public class SimpleYamlConfig {
   public ConfigurationValue get(String path) {
     ConfigurationSection section = rootGroup.get(path);
 
-    if (section.isValue()) {
+    if (section != null && section.isValue()) {
       return section.getAsValue();
+    }
+
+    return null;
+  }
+
+  /**
+   * Returns a {@link ConfigurationGroup} from the config.
+   *
+   * @param path The path to the group
+   * @return The {@link ConfigurationGroup}, or null if it does not exist or is not a group.
+   */
+  public ConfigurationGroup getGroup(String path) {
+    ConfigurationSection section = rootGroup.get(path);
+
+    if (section != null && section.isValue()) {
+      return section.getAsGroup();
     }
 
     return null;

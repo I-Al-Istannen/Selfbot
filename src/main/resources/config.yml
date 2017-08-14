@@ -1,2 +1,6 @@
 settings:
   token: "<your token>"
+  prefix: "badme."
+  command:
+    keywords:
+      plantuml: "plantuml"

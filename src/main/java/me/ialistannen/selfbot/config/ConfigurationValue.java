@@ -1,5 +1,7 @@
 package me.ialistannen.selfbot.config;
 
+import java.util.List;
+
 /**
  * A {@link ConfigurationSection} that is a single value.
  */
@@ -71,6 +73,16 @@ public class ConfigurationValue extends AbstractConfigurationSection {
    */
   public long getAsLong() {
     return (long) getRaw();
+  }
+
+  /**
+   * @return The value casted to a list
+   * @throws ClassCastException if it was none
+   */
+  public <T> List<T> getAsList() {
+    @SuppressWarnings("unchecked")
+    List<T> t = (List<T>) getRaw();
+    return t;
   }
 
   @Override

@@ -38,7 +38,7 @@ public final class Selfbot {
 
     new JDABuilder(AccountType.CLIENT)
         .setToken(getConfig().get("settings.token").getAsString())
-        .addEventListener(new CommandHandler())
+        .addEventListener(new CommandHandler(this))
         .buildBlocking();
   }
 
